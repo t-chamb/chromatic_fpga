@@ -28,7 +28,7 @@ You will receive an email within a few minutes with a `.lic` file attached. Run 
 Once in the IDE, load `evt1_x2.gprj` project and click on the green recycle-like button icon to run synthesis and PnR. This will take about 5-10 minutes to complete.
 
 ## Flashing
-Flashing can be performed using the official [Gowin Programmer](https://www.gowinsemi.com/en/) software or the [`openFPGALoader`](https://github.com/trabucayre/openFPGALoader) utility through the Chromatic's USB interface.
+Flashing can be performed using the official [Gowin Programmer](https://www.gowinsemi.com/en/) software or the [`openFPGALoader`](https://github.com/trabucayre/openFPGALoader) utility through the Chromatic's USB interface. The Gowin Programmer requires the installation of the GWU2X device driver.
 
 Note:
 1. The Chromatic must be powered on for either tool to detect the FPGA. This means the power switch is in the **ON** position.
