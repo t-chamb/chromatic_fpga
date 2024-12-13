@@ -34,6 +34,7 @@ The version of the IDE was switched to Gowin IDE v1.9.9.03. This resolves a synt
 
 ### Fixed
 - Improved AA/LiPo detection logic to resolve critical battery false positives.
+- Fixes palette flickering issue seen on some games like Tetris.
 
 ## v13.1
 This is the first production release.
