@@ -14,7 +14,6 @@ set_option -bit_format bin
 set_option -bg_programming jtag_sspi_qsspi
 set_option -output_base_name evt1_x2_v07
 set_option -use_mspi_as_gpio 1
-add_file -type verilog  "src/board/evt1_x2/header.vh"
 add_file -type cst      "src/board/evt1_x2/evt1_x2.cst"
 add_file -type sdc      "src/board/evt1_x2/evt1_x2.sdc"
 #add_file -type gao      "src/psram.rao"
@@ -44,6 +43,8 @@ add_file -type verilog "src/rtl/USB/USBUVCUART/uart/uart.v"
 add_file -type verilog "src/rtl/USB/USBUVCUART/sync_fifo/usb_fifo.v"
 add_file -type verilog "src/rtl/USB/USBUVCUART/sync_fifo/sync_rx_pkt_fifo.v"
 add_file -type verilog "src/rtl/USB/USBUVCUART/sync_fifo/sync_tx_pkt_fifo.v"
+add_file -type verilog "src/rtl/USB/USBUVCUART/fifo_video/fifo_video.v"
+add_file -type verilog "src/rtl/USB/USBUVCUART/color_space_convertor/color_space_convertor.v"
 
 add_file -type verilog "src/gowin_pll_preevt/gowin_pll.v"
 add_file -type verilog "src/top.v"
