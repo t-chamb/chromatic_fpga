@@ -44,18 +44,18 @@ module top #(parameter ISSIMU=0)
 
     output reg          ESP32_IO0,
 
-    output              I2S_BCLK,       // D16 IO33
-    input               I2S_WS,         // D15 IO25 CC
-    input               I2S_DIN,        // D14 IO26
-    input               I2S_DOUT,       // D13 IO27
+    input               I2S_BCLK,       // D16 IO33 - Bit clock FROM ESP32 (ESP32 is master)
+    input               I2S_WS,         // D15 IO25 CC - Word select FROM ESP32
+    output              I2S_DIN,        // D14 IO26 - Audio data TO ESP32
+    input               I2S_DOUT,       // D13 IO27 - Not used
     input               ESP32_MCU_D12,  // D12 IO9
     output              ESP32_MCU_D11,  // D11 IO10 CC
     input               QSPI_CS,        // CS D10 IO5 CC
     input               QSPI_CLK,       // CLK D9 IO18 CC
-    input               QSPI_MOSI,      // D D8 IO23
-    input               QSPI_MISO,      // Q D7 IO19
-    input               QSPI_WP,        // WP D6 IO22
-    input               QSPI_HD,        // HD D5 IO21 CC
+    inout               QSPI_MOSI,      // D D8 IO23
+    inout               QSPI_MISO,      // Q D7 IO19
+    inout               QSPI_WP,        // WP D6 IO22
+    inout               QSPI_HD,        // HD D5 IO21 CC
     output  reg         ESP32_MCU_D4,   // RXD
     input               ESP32_MCU_D3,   // TXD
 
@@ -384,6 +384,10 @@ module top #(parameter ISSIMU=0)
         .QSPI_CS(QSPI_CS),
         .QSPI_WP(QSPI_WP),
         .QSPI_HD(QSPI_HD),
+        .LEFT(left),
+        .RIGHT(right),
+        .AUD_MCLK(AUD_MCLK),
+        .AUD_WCLK(AUD_WCLK),
 
         .PS_CE_N(PS_CE_N),
         .PS_CLK(PS_CLK),
@@ -403,8 +407,16 @@ module top #(parameter ISSIMU=0)
         .hHsync(gb_lcd_mode[1]),
         .hVsync(gb_lcd_vsync),
         .hWrBurstQ(hWrBurstQ),
-        .hWrBurstQ2(hWrBurstQ2)
+        .hWrBurstQ2(hWrBurstQ2),
+
+        // I2S connections - ESP32 is I2S master, provides BCLK and WS
+        .audio_sample_clk(audio_sample_clk),  // Sample clock derived from ESP32 WS
+        .i2s_bclk(I2S_BCLK),        // Input from ESP32 (bit clock)
+        .i2s_ws(I2S_WS),            // Input from ESP32 (word select / sample timing)
+        .i2s_data(I2S_DIN)          // Output to ESP32 (serial audio data)
     );
+
+    wire audio_sample_clk;  // 44.1kHz sample clock (derived from ESP32 WS, available for debug)
 
     wire IR_RX_FILTER;
 
@@ -712,6 +724,8 @@ module top #(parameter ISSIMU=0)
         .RX_DATA_VAL(uart_rx_val)//output
     );
 
-    assign I2S_BCLK = menuDisabled;
+    // I2S connections to ESP32 - already wired in mem_system_top instantiation above
+    // ESP32 is I2S master and generates BCLK and WS clocks
+    // FPGA receives those clocks and outputs serial audio data on I2S_DIN
 
 endmodule
