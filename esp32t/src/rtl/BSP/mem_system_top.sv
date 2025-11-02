@@ -9,10 +9,14 @@ module mem_system_top #(parameter ISSIMU=0)
     
     input               QSPI_CLK,
     input               QSPI_MOSI,
-    input               QSPI_MISO,
+    inout               QSPI_MISO,
     input               QSPI_CS,
     input               QSPI_WP,
     input               QSPI_HD,
+    input    [15:0]     LEFT,
+    input    [15:0]     RIGHT,
+    input               AUD_MCLK,
+    input               AUD_WCLK,
 
     output              PS_CE_N,
     output              PS_CLK,
@@ -32,7 +36,12 @@ module mem_system_top #(parameter ISSIMU=0)
     output  [15:0]      hWrBurstQ2,
     
     output              BIST_failed,
-    output              BIST_finished
+    output              BIST_finished,
+    
+    output              audio_sample_clk,  // 44.1kHz sample clock for ESP32
+    input               i2s_bclk,          // I2S bit clock FROM ESP32 (ESP32 is master)
+    input               i2s_ws,            // I2S word select FROM ESP32
+    output              i2s_data           // I2S serial data TO ESP32
 );
     
     localparam RAMPORTCOUNT = 5;
@@ -138,6 +147,14 @@ module mem_system_top #(parameter ISSIMU=0)
     wire [31:0] qAddress;
     wire qDataValid;
 
+    wire audio_sample_clk_int;
+    wire i2s_data_int;
+    
+    // Connect internal wires to module ports
+    assign audio_sample_clk = audio_sample_clk_int;
+    assign i2s_data = i2s_data_int;
+    // i2s_bclk and i2s_ws are now inputs, pass them directly to QSPI_Slave
+    
     QSPI_Slave u_QSPI_Slave(
         .QSPI_CLK(QSPI_CLK),
         .QSPI_CS(QSPI_CS),
@@ -145,11 +162,19 @@ module mem_system_top #(parameter ISSIMU=0)
         .QSPI_MISO(QSPI_MISO),
         .QSPI_WP(QSPI_WP),
         .QSPI_HD(QSPI_HD),
+        .LEFT(LEFT),
+        .RIGHT(RIGHT),
+        .AUD_MCLK(AUD_MCLK),
+        .AUD_WCLK(AUD_WCLK),
         
         .qMenuInit(qMenuInit),
         .qDataValid(qDataValid),
         .qData(qData),
-        .qAddress(qAddress)
+        .qAddress(qAddress),
+        .audio_sample_clk(audio_sample_clk_int),
+        .i2s_bclk(i2s_bclk),        // Input from ESP32
+        .i2s_ws(i2s_ws),            // Input from ESP32
+        .i2s_data(i2s_data_int)     // Output to ESP32
     );
 
     mm_burst_write u_mm_burst_write(
