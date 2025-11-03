@@ -7,6 +7,7 @@ module aud_system_top(
     input   [15:0]      left,
     input   [15:0]      right,
     input               software_mute,
+    input               bluetooth_mode,
 
     output  [7:0]       volume,
     output              hHeadphones,
@@ -52,8 +53,13 @@ module aud_system_top(
             if (count == 5'd0) begin
                 count <= 5'd31;
                 AUD_WCLK <= 1'b1;
-                stereo_sr <= ~hHeadphones ? {16'd0,gMonoSpeaker[16:1]} :
-                    { right_m[15:0],left_m[15:0] };
+                // Audio routing logic (priority order):
+                // 1. If headphones detected: send stereo to headphone jack (always works)
+                // 2. Else if bluetooth_mode active: mute system speaker only
+                // 3. Else: send mono mix to system speaker
+                stereo_sr <= hHeadphones ? { right_m[15:0],left_m[15:0] } :
+                             bluetooth_mode ? 32'd0 :
+                             {16'd0,gMonoSpeaker[16:1]};
             end
             else begin
                 count <= count - 1'd1;
