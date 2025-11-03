@@ -24,6 +24,7 @@ module system_monitor(
     input   [8:0]       hButtons,
     output  reg [8:0]   MCU_buttons,
     input   [6:0]       hVolume,
+    output  reg         bluetooth_mode,
     input   [7:0]       pmic_sys_status,
     input               hHeadphones,
     input               gSecondEna,
@@ -100,7 +101,8 @@ module system_monitor(
     begin
         if(reset) begin
             system_control <= 16'd1;
-            MCU_buttons    <= 9'd0; 
+            MCU_buttons    <= 9'd0;
+            bluetooth_mode <= 1'b0;
             request_gpd   <= 1'b0;
         end else begin
             request_buttons              <= 1'b0;
@@ -129,6 +131,9 @@ module system_monitor(
                 end
                 if(rx_address == 7'd9) begin
                     MCU_buttons <= rx_data[8:0];
+                end
+                if(rx_address == 7'd10) begin
+                    bluetooth_mode <= rx_data[0];
                 end
                 if(rx_address == 7'd6) begin
                     request_version <= 1'b1;

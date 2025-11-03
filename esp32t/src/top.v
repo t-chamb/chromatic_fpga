@@ -336,6 +336,7 @@ module top #(parameter ISSIMU=0)
     wire [15:0] left, right;
     wire [7:0]  volume;
     wire        hHeadphones;
+    wire        bluetooth_mode;
 
     aud_system_top u_aud_system_top(
         .gClk(gClk),
@@ -352,6 +353,7 @@ module top #(parameter ISSIMU=0)
         .AUD_WCLK(AUD_WCLK),
 
         .software_mute(system_control[0]),
+        .bluetooth_mode(bluetooth_mode),
         .pmic_sys_status(pmic_sys_status),
         .volume(volume),
         .hHeadphones(hHeadphones),
@@ -676,6 +678,7 @@ module top #(parameter ISSIMU=0)
         .hButtons(9'd0),
         .MCU_buttons(MCU_buttons),
         .hVolume(volume[6:0]),
+        .bluetooth_mode(bluetooth_mode),
         .pmic_sys_status(pmic_sys_status),
         .hHeadphones(hHeadphones),
         .gSecondEna(secondEna),
