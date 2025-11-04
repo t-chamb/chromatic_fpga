@@ -3,10 +3,10 @@
 module QSPI_Slave(
     input               QSPI_CLK,
     input               QSPI_CS,
-    inout               QSPI_MOSI,
-    inout               QSPI_MISO,
-    inout               QSPI_WP,
-    inout               QSPI_HD,
+    input               QSPI_MOSI,
+    input               QSPI_MISO,
+    input               QSPI_WP,
+    input               QSPI_HD,
     input               AUD_MCLK,
     input               AUD_WCLK,    // Word select clock from aud_system_top (for codec)
 
@@ -155,15 +155,13 @@ module QSPI_Slave(
         end
     end
 
-    // Audio QIO - drive all 4 pins during audio reads
-    reg qio_oe = 1'b0;
-    reg [3:0] qio_out = 4'b0;
-    
-    // Match the qPins input order: {HD, WP, MISO, MOSI}
-    assign QSPI_MOSI = qio_oe ? qio_out[0] : 1'bz;
-    assign QSPI_MISO = qio_oe ? qio_out[1] : 1'bz;
-    assign QSPI_WP   = qio_oe ? qio_out[2] : 1'bz;
-    assign QSPI_HD   = qio_oe ? qio_out[3] : 1'bz;
+    // Audio QIO - Note: QSPI pins are inputs only
+    // The original design had tristate outputs here, but they were removed
+    // because QSPI pins should be driven by ESP32 only
+    // Audio data is now transmitted via I2S instead of QSPI QIO mode
+    // These registers are kept for compatibility but no longer drive pins
+    reg qio_oe = 1'b0;     // Unused - was for tristate control
+    reg [3:0] qio_out = 4'b0;  // Unused - was for QIO output
 
     reg [15:0] aud_shift = 16'd0;
     reg  [3:0] nibble_cnt = 4'd0;
