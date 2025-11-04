@@ -1,3 +1,12 @@
+## v18.9
+
+### Added
+- Bluetooth mode feature for system speaker control via UART (address 0x0A)
+- I2S audio transport from FPGA to ESP32 for Bluetooth audio streaming
+
+### Fixed
+- QSPI communication by reverting I2S pins to input-only mode
+
 ## v18.8
 
 ### Changed
